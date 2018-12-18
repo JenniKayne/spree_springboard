@@ -45,12 +45,15 @@ module SpreeSpringboard
 
           def create_from_springboard_resource(springboard_resource)
             variant = Spree::Product.not_deleted.gift_cards.not_e_gift_cards.first.master
-            Spree::GiftCard.create!(
+            gift_card = Spree::GiftCard.create!(
               code: springboard_resource.number,
               current_value: springboard_resource.balance,
               original_value: springboard_resource.balance,
               variant: variant
             )
+            gift_card.springboard_id = springboard_resource.id
+
+            gift_card
           end
         end
       end

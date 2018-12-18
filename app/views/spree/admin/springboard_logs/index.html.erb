@@ -71,7 +71,11 @@
                           end %>
         <% parent_type = log.parent_type.to_s.demodulize.titleize %>
         <% parent_number = unless log.parent_id.nil?
-                             log.parent_type == 'Spree::Order' ? log.parent.number : log.parent_id
+                             if log.parent_type == 'Spree::Order'
+                               log.parent&.number || 'missing_parent'
+                             else
+                                log.parent_id
+                             end
                            end %>
         <% parent_url = if !log.parent_id.nil? && log.parent_type == 'Spree::Order'
                           edit_admin_order_path(log.parent)

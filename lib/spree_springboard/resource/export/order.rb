@@ -147,7 +147,7 @@ module SpreeSpringboard
         end
 
         def shipping_total(order)
-          adjustments = order.shipments.map(&:adjustments).flatten
+          adjustments = order.shipments.map { |shipment| shipment.adjustments.eligible }.flatten
           order.ship_total + adjustments.sum(&:amount)
         end
 

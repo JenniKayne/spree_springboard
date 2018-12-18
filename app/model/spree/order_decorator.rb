@@ -26,12 +26,18 @@ module Spree
     scope :springboard_sync_allowed_without_payment, -> { complete.where(total: 0) }
 
     def can_springboard_export?
+      return false if springboard_export_disabled?
+
       self.class.springboard_sync_allowed_without_payment.include?(self) ||
         (
           self.class.springboard_sync_allowed.include?(self) &&
           payments.
             select { |payment| %w[completed pending processing].include?(payment.state) }.sum(&:amount) == total
         )
+    end
+
+    def springboard_export_disabled?
+      self&.comments&.include?('#springboard-export-disabled')
     end
 
     # Schedule order and purchased e-gift-cards export to Springboard
