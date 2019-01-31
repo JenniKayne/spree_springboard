@@ -26,7 +26,7 @@ module SpreeSpringboard
           # Perform variant import of one page of springboard_items
           #
           def import_page(import_client, page_no)
-            response = import_client.query(per_page: PER_PAGE, page: page_no).get
+            response = import_client.query(per_page: PER_PAGE, page: page_no).filter(active: true).get
             return unless response.success?
             import_springboard_resources(response.body.results)
           end
