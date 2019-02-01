@@ -27,7 +27,7 @@ module SpreeSpringboard
         # Fetch product page count
         #
         def springboard_page_count(import_client)
-          import_client.query(per_page: PER_PAGE).get.body.pages
+          import_client.query(per_page: PER_PAGE).filter(active: true).get.body.pages
         end
       end
     end
