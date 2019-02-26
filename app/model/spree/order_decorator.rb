@@ -32,7 +32,7 @@ module Spree
         (
           self.class.springboard_sync_allowed.include?(self) &&
           payments.
-            select { |payment| %w[completed pending processing].include?(payment.state) }.sum(&:amount) == total
+            select { |payment| %w[completed pending processing].include?(payment.state) }.sum(&:amount) >= total
         )
     end
 
