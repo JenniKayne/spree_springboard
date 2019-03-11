@@ -56,7 +56,7 @@ module SpreeSpringboard
             sku = prepare_sku(item.custom)
 
             # Find master variant
-            master_variant = Spree::Variant.find_by(sku: sku)
+            master_variant = Spree::Variant.with_deleted.find_by(sku: sku)
             return master_variant.product unless master_variant.nil?
 
             # Create new product with master variant if none exists
