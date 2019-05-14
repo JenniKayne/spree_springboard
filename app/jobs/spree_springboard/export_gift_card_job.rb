@@ -13,7 +13,8 @@ module SpreeSpringboard
         gift_card.springboard_export!
       end
     rescue StandardError => error
-      ExceptionNotifier.notify_exception(error, data: { msg: "Export GiftCard #{gift_card.code}" })
+      Raven.extra_context(exporter_gift_card: gift_card.code)
+
       raise error
     end
   end

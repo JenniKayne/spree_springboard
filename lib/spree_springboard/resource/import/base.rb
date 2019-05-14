@@ -36,8 +36,6 @@ module SpreeSpringboard
           springboard_resources = import_client.get.body.results
           import_springboard_resources(springboard_resources)
           true
-        rescue StandardError => error
-          log(error, data: { msg: 'Import Last Day Error' })
         end
 
         #

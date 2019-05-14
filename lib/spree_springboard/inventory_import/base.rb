@@ -71,7 +71,8 @@ module SpreeSpringboard
       # Log handler
       #
       def log(error, params)
-        ExceptionNotifier.notify_exception(error, params)
+        Raven.extra_context(params)
+        Raven.capture_exception(error)
       end
 
       #

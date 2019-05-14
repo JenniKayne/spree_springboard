@@ -6,7 +6,7 @@ module SpreeSpringboard
       job = SpreeSpringboard::InventoryImport::Incremental.new
       job.perform
     rescue StandardError => error
-      ExceptionNotifier.notify_exception(error, data: { msg: 'Incremental Inventory Import' })
+      Raven.capture_exception(error)
     ensure
       job.unlock if job.in_progress?
     end

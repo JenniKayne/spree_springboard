@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.0'
 
   spree_version = '~> 3.3.0'
-  spec.add_dependency 'exception_notification'
+  spec.add_dependency 'sentry-raven'
   spec.add_dependency 'spree_api',         spree_version
   spec.add_dependency 'spree_backend',     spree_version
   spec.add_dependency 'spree_core',        spree_version
