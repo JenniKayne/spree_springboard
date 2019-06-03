@@ -40,14 +40,16 @@
   <table class="table" id="listing_logs">
     <colgroup>
       <col style="width: 6%">
+      <col style="width: 6%">
+      <col style="width: 14%">
+      <col style="width: 32%">
+      <col style="width: 13%">
+      <col style="width: 13%">
       <col style="width: 16%">
-      <col style="width: 34%">
-      <col style="width: 13%">
-      <col style="width: 13%">
-      <col style="width: 18%">
     </colgroup>
     <thead>
       <tr data-hook="admin_products_index_headers">
+        <th><%= Spree.t(:params) %></th>
         <th><%= Spree.t(:type) %></th>
         <th><%= Spree.t(:created_at) %></th>
         <th><%= Spree.t(:message) %></th>
@@ -82,6 +84,7 @@
                         end %>
 
         <tr id="<%= spree_dom_id log %>" data-hook="admin_springbaord_logs_index_rows" class="<%= cycle('odd', 'even') %>">
+          <td><%= link_to(log.id, admin_springboard_log_path(log)) %></td>
           <td><%= log.message_type %></td>
           <td><%= log.created_at.strftime('%Y-%m-%d %l:%M %p') %></td>
           <td><%= log.message %></td>

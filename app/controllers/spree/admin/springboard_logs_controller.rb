@@ -1,6 +1,17 @@
 module Spree
   module Admin
     class SpringboardLogsController < ResourceController
+
+      def show
+        @springboard_log = SpringboardLog.find(params[:id])
+        render json: {
+          id: @springboard_log.id,
+          resource_type: @springboard_log.resource_type,
+          message_type: @springboard_log.message_type,
+          resource_export_params: @springboard_log.resource_export_params,
+        }
+      end
+
       def collection
         return @collection if @collection.present?
         params[:q] ||= {}
