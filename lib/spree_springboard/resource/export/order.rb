@@ -46,7 +46,8 @@ module SpreeSpringboard
               each { |line_item| line_item.springboard_export!(parent: order) }
               springboard_invoice_complete!(order)
             end
-            invoice_springboard_id
+           
+             invoice_springboard_id
           end
         end
 
