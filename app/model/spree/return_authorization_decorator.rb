@@ -12,7 +12,8 @@ module Spree
       import_manager.import_last_three_days!
     rescue StandardError => error
       class_name = name.demodulize.titleize.pluralize
-      ExceptionNotifier.notify_exception(error, data: { msg: "Import #{class_name} Error" })
+      Raven.extra_context(import_class_name: class_name)
+
       raise error
     end
   end

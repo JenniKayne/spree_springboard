@@ -9,9 +9,6 @@ module Spree
 
       import_manager = springboard_import_class.new
       import_manager.import_attributes!
-    rescue StandardError => error
-      ExceptionNotifier.notify_exception(error, data: { msg: 'Import Variant attributes Error' })
-      raise error
     end
   end
 end

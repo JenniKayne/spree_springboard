@@ -5,7 +5,8 @@ module SpreeSpringboard
     def perform(order)
       order.springboard_export! if order.springboard_id.blank?
     rescue StandardError => error
-      ExceptionNotifier.notify_exception(error, data: { msg: "Order #{order.number}" })
+      Raven.extra_context(order_number: order.number)
+
       raise error
     end
   end
