@@ -32,11 +32,13 @@ module Spree
       log_params = params.merge(
         message: message,
         message_type: message_type,
-        resource: resource
+        resource: resource,
       )
 
       # Make sure there is no resource: nil in hash - it overrides resource_type: value
       log_params.delete(:resource) if log_params[:resource].nil?
+      # Make sure there is no resource_export_params: nil in hash
+      log_params.delete(:resource_export_params) if log_params[:resource_export_params].nil?
       create! log_params
     end
   end

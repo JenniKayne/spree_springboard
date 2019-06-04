@@ -40,17 +40,19 @@
   <table class="table" id="listing_logs">
     <colgroup>
       <col style="width: 6%">
+      <col style="width: 6%">
+      <col style="width: 14%">
+      <col style="width: 32%">
+      <col style="width: 13%">
+      <col style="width: 13%">
       <col style="width: 16%">
-      <col style="width: 34%">
-      <col style="width: 13%">
-      <col style="width: 13%">
-      <col style="width: 18%">
     </colgroup>
     <thead>
       <tr data-hook="admin_products_index_headers">
         <th><%= Spree.t(:type) %></th>
         <th><%= Spree.t(:created_at) %></th>
         <th><%= Spree.t(:message) %></th>
+        <th><%= Spree.t(:export_params) %></th>
         <th><%= Spree.t(:item) %></th>
         <th><%= Spree.t(:parent_item) %></th>
         <th><%= Spree.t(:transaction_id) %></th>
@@ -85,6 +87,7 @@
           <td><%= log.message_type %></td>
           <td><%= log.created_at.strftime('%Y-%m-%d %l:%M %p') %></td>
           <td><%= log.message %></td>
+          <td><%= log.resource_export_params.nil? ? 'None' : link_to(log.id, admin_springboard_log_path(log)) %></td>
           <td>
             <% if resource_url.present? %><a href="<%= resource_url %>"><% end %>
               <%= resource_type %> <%= "(#{resource_number})" unless resource_number.nil? %></td>

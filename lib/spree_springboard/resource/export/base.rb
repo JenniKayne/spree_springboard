@@ -32,7 +32,8 @@ module SpreeSpringboard
         def sync!(resource, params = {})
           log_params = {
             transaction_id: self.class.transaction_id(resource),
-            parent: params[:parent]
+            parent: params[:parent],
+            resource_export_params: params
           }
           Spree::SpringboardLog.notice('Sync Start', resource, log_params)
           # Export one resource to Springboard
@@ -75,7 +76,8 @@ module SpreeSpringboard
           log_params = {
             resource_type: resource_type,
             parent: parent,
-            transaction_id: transaction_id(parent)
+            transaction_id: transaction_id(parent),
+            resource_export_params: resource_export_params
           }
           Spree::SpringboardLog.notice('Sync Start', nil, log_params)
           custom_client = SpreeSpringboard.client[client_string]
