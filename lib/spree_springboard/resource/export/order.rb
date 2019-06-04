@@ -43,10 +43,12 @@ module SpreeSpringboard
             invoice_springboard_id = order.child_springboard_id('invoice')
             if invoice_springboard_id.present? && order.springboard_element[:status] != 'closed'
               order.line_items.springboard_not_synced.
-              each { |line_item| line_item.springboard_export!(parent: order) }
+                each { |line_item| line_item.springboard_export!(parent: order) }
+
               springboard_invoice_complete!(order)
             end
-            invoice_springboard_id
+
+             invoice_springboard_id
           end
         end
 
