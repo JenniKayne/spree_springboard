@@ -40,12 +40,12 @@
   <table class="table" id="listing_logs">
     <colgroup>
       <col style="width: 6%">
-      <col style="width: 6%">
-      <col style="width: 14%">
-      <col style="width: 32%">
+      <col style="width: 15%">
+      <col style="width: 18%">
       <col style="width: 13%">
-      <col style="width: 13%">
-      <col style="width: 16%">
+      <col style="width: 15%">
+      <col style="width: 15%">
+      <col style="width: 18%">
     </colgroup>
     <thead>
       <tr data-hook="admin_products_index_headers">
@@ -54,7 +54,6 @@
         <th><%= Spree.t(:message) %></th>
         <th><%= Spree.t(:export_params) %></th>
         <th><%= Spree.t(:item) %></th>
-        <th><%= Spree.t(:parent_item) %></th>
         <th><%= Spree.t(:transaction_id) %></th>
       </tr>
     </thead>
@@ -69,19 +68,10 @@
                           elsif !log.resource_id.nil? && log.resource_type == 'Spree::Payment'
                             admin_order_payment_path(log.resource.order, log.resource)
                           elsif log.resource_type == 'bill_address' || log.resource_type == 'ship_address'
-                            edit_admin_order_customer_path(log.parent)
+                            edit_admin_order_customer_path(log.parent_id)
                           end %>
         <% parent_type = log.parent_type.to_s.demodulize.titleize %>
-        <% parent_number = unless log.parent_id.nil?
-                             if log.parent_type == 'Spree::Order'
-                               log.parent&.number || 'missing_parent'
-                             else
-                                log.parent_id
-                             end
-                           end %>
-        <% parent_url = if !log.parent_id.nil? && log.parent_type == 'Spree::Order'
-                          edit_admin_order_path(log.parent)
-                        end %>
+
 
         <tr id="<%= spree_dom_id log %>" data-hook="admin_springbaord_logs_index_rows" class="<%= cycle('odd', 'even') %>">
           <td><%= log.message_type %></td>
@@ -92,11 +82,6 @@
             <% if resource_url.present? %><a href="<%= resource_url %>"><% end %>
               <%= resource_type %> <%= "(#{resource_number})" unless resource_number.nil? %></td>
             <% if resource_url.present? %></a><% end %>
-          <td>
-            <% if parent_url.present? %><a href="<%= parent_url %>"><% end %>
-              <%= parent_type %> <%= "(#{parent_number})" unless parent_number.nil? %>
-            <% if parent_url.present? %></a><% end %>
-          </td>
           <td><%= log.transaction_id %></td>
         </tr>
       <% end %>
