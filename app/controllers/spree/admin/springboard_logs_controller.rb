@@ -8,7 +8,7 @@ module Spree
           id: @springboard_log.id,
           resource_type: @springboard_log.resource_type,
           message_type: @springboard_log.message_type,
-          resource_export_params: @springboard_log.resource_export_params,
+          resource_export_params: @springboard_log.resource_export_params
         }
       end
 
