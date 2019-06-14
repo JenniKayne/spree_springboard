@@ -26,10 +26,12 @@ module SpreeSpringboard
 
         def sync_request(resource, params)
           client(resource).
-            send(sync_method(resource), export_params(resource, params))
+            send(sync_method(resource), params)
         end
 
         def sync!(resource, params = {})
+          params = export_params(resource, params)
+
           log_params = {
             transaction_id: self.class.transaction_id(resource),
             parent: params[:parent],
