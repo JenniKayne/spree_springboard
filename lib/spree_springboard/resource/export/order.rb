@@ -32,23 +32,12 @@ module SpreeSpringboard
         #
 
         def springboard_invoice!(order)
-          if springboard_can_invoice?(order)
-            invoice_springboard_id = springboard_invoice_create!(order)
-            springboard_invoice_line_items_create!(order, invoice_springboard_id) if invoice_springboard_id.present?
-            springboard_invoice_complete!(order) if invoice_springboard_id.present?
+          if springboard_invoiceable?
+            springboard_invoiced?(order) ? invoice_springboard_id = order.child_springboard_id('invoice') : invoice_springboard_id = springboard_invoice_create!(order)
+            springboard_invoice_line_items_create!(order, invoice_springboard_id)
+            springboard_invoice_complete!(order)
+
             invoice_springboard_id
-          # If the order has been invoiced AND it's open:
-          # attempt to resync line_items and complete the order.
-          elsif springboard_invoiced(order)
-            invoice_springboard_id = order.child_springboard_id('invoice')
-            if invoice_springboard_id.present? && order.springboard_element[:status] != 'closed'
-              order.line_items.springboard_not_synced.
-                each { |line_item| line_item.springboard_export!(parent: order) }
-
-              springboard_invoice_complete!(order)
-            end
-
-             invoice_springboard_id
           end
         end
 
@@ -170,8 +159,8 @@ module SpreeSpringboard
           order.adjustments.eligible.tax
         end
 
-        def springboard_can_invoice?(order)
-          order.shipped? && !springboard_invoiced(order) && order.springboard_element[:status] == 'open'
+        def springboard_invoiceable?
+          order.shipped?
         end
 
         def springboard_invoice_params(order)
@@ -192,8 +181,8 @@ module SpreeSpringboard
           }
         end
 
-        def springboard_invoiced(order)
-          order.child_springboard_id('invoice').present?
+        def springboard_invoiced?(order)
+          order.child_springboard_id('invoice').present? && order.springboard_element[:status] == 'closed'
         end
 
         private
