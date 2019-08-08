@@ -46,7 +46,7 @@ module SpreeSpringboard
           client = SpreeSpringboard.client[endpoint]
           response = client.put(status: 'complete')
 
-          response && response.success?
+          response&.success?
         end
 
         def springboard_invoice_create!(order)
@@ -78,7 +78,7 @@ module SpreeSpringboard
         def springboard_tax_sync!(order)
           # Create Taxes (remove all first if needed)
           springboard_tax = calculate_springboard_tax_total(order)
-          if springboard_tax > 0 && springboard_tax != spree_taxes(order).sum(:amount)
+          if springboard_tax.positive? && springboard_tax != spree_taxes(order).sum(:amount)
             # Remove tax sync data
             spree_taxes(order).each(&:springboard_desync!)
 
@@ -94,7 +94,8 @@ module SpreeSpringboard
 
         def calculate_springboard_tax_total(order)
           result = SpreeSpringboard.client["sales/orders/#{order.springboard_id}/taxes"].query(per_page: 1000).get
-          raise "Springboard Order #{order_springboard_id} missing" unless result && result.success?
+          raise "Springboard Order #{order_springboard_id} missing" unless result&.success?
+
           result.body.results.map(&:value).sum
         end
 
@@ -107,6 +108,7 @@ module SpreeSpringboard
           shipping_address_id = prepare_springboard_address_id(order, 'ship_address', springboard_user_id)
           source_location_id = export_params_source_location_id(order)
           return {} unless source_location_id.present?
+
           {
             custom: {
               ecommerce_number: order.number
@@ -128,21 +130,26 @@ module SpreeSpringboard
         def export_params_source_location_id(order)
           stock_location = order.shipments.map(&:stock_location).compact.find(&:springboard_id?)
           return if stock_location.blank?
+
           stock_location.springboard_id
         end
 
         def export_params_shipping_method_id(order)
           return if order.shipments.blank?
+
           shipping_methods = order.shipments.map(&:shipping_method).compact.uniq.select(&:springboard_id?)
           return if shipping_methods.blank?
+
           shipping_methods.first.springboard_id
         end
 
         def export_params_station_id(order)
           default_station_id = SpreeSpringboard.configuration.station_id
           return default_station_id if order.shipments.blank?
+
           stock_locations = order.shipments.map(&:stock_location).uniq.select(&:springboard_station_id?)
           return default_station_id if stock_locations.blank?
+
           stock_locations.first.springboard_station_id
         end
 
