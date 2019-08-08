@@ -32,7 +32,7 @@ module SpreeSpringboard
         #
 
         def springboard_invoice!(order)
-          if springboard_invoiceable?
+          if springboard_invoiceable?(order)
             springboard_invoiced?(order) ? invoice_springboard_id = order.child_springboard_id('invoice') : invoice_springboard_id = springboard_invoice_create!(order)
             springboard_invoice_line_items_create!(order, invoice_springboard_id)
             springboard_invoice_complete!(order)
@@ -166,7 +166,7 @@ module SpreeSpringboard
           order.adjustments.eligible.tax
         end
 
-        def springboard_invoiceable?
+        def springboard_invoiceable?(order)
           order.shipped?
         end
 
