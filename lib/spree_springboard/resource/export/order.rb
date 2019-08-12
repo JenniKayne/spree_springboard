@@ -169,7 +169,7 @@ module SpreeSpringboard
           order.adjustments.eligible.tax
         end
 
-        def springboard_order_invoiceable?
+        def springboard_order_invoiceable?(order)
           order.shipped? && order.springboard_element[:status] == 'open'
         end
 
