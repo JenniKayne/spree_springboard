@@ -10,7 +10,7 @@ module SpreeSpringboard
 
         def fetch(resource)
           response = client_resource(resource).get
-          response.body if response && response.success?
+          response.body if response&.success?
         end
 
         def update(resource, params)
@@ -19,7 +19,7 @@ module SpreeSpringboard
           }
           Spree::SpringboardLog.notice("Update attempt #{params}", resource, log_params)
           response = client_resource(resource).put(params)
-          result = response && response.success?
+          result = response&.success?
           Spree::SpringboardLog.notice("Update result #{result}", resource, log_params)
           result
         end
@@ -41,7 +41,7 @@ module SpreeSpringboard
           # Export one resource to Springboard
           # Can be used as update as well
           response = sync_request(resource, params)
-          if response && response.success?
+          if response&.success?
             if response.resource
               # if sync_method == post and successful then update springboard_id
               # sync_method == post doesn't return resource
@@ -84,7 +84,7 @@ module SpreeSpringboard
           Spree::SpringboardLog.notice('Sync Start', nil, log_params)
           custom_client = SpreeSpringboard.client[client_string]
           response = custom_client.post(resource_export_params)
-          if response && response.success?
+          if response&.success?
             if !response.resource.nil? && response.resource.exists?
               springboard_resource = response.resource.get
               parent.set_child_springboard_id(resource_type, springboard_resource[:id])
@@ -97,7 +97,12 @@ module SpreeSpringboard
           else
             if response
               Spree::SpringboardLog.notice("Response status #{response.status}", nil, log_params)
-              Spree::SpringboardLog.notice("Response body #{response.body}", nil, log_params)
+              begin
+                Spree::SpringboardLog.notice("Response body #{response.body}", nil, log_params)
+              rescue JSON::ParserError, RuntimeError => e
+                Raven.extra_context(client_string: client_string, resource_type: resource_type, resource_export_params: resource_export_params, parent: parent, error: e)
+                raise 'Error parsing response body.'
+              end
             end
             Spree::SpringboardLog.error('Sync Fail', nil, log_params)
             false
