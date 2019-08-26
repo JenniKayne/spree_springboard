@@ -9,6 +9,7 @@ module Spree
     # Import GC from Springboard to Spree by gc.code
     def self.springboard_import_by_code(code)
       return if code.blank?
+
       springboard_import_class.import_by_code(code)
     end
 
@@ -20,12 +21,13 @@ module Spree
     # Schedule to update Spree balance (after an update in spree)
     def schedule_springboard_adjust_balance
       return if !springboard_id? || current_value_before_last_save == current_value
-      SpreeSpringboard::UpdateGiftCardJob.perform_later(self)
+
+      SpreeSpringboard::UpdateGiftCardJob.perform_later(id)
     end
 
     # Schedule to export a gc from Spree to Springboard (can be used on order completion)
     def schedule_springboard_export
-      SpreeSpringboard::ExportGiftCardJob.perform_later(self)
+      SpreeSpringboard::ExportGiftCardJob.perform_later(id)
     end
 
     # Perform balance adjustment from Springboard to Spree

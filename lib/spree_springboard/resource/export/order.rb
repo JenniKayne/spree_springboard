@@ -32,7 +32,10 @@ module SpreeSpringboard
         #
 
         def springboard_invoice!(order)
-          return unless springboard_order_invoiceable?(order)
+          unless springboard_order_invoiceable?(order)
+            Raven.extra_context(order: order)
+            raise "Tried to invoice Order ##{order.id} when it was not invoiceable."
+          end
 
           fetch_or_create_springboard_invoice_id_from_order(order).tap do |invoice_springboard_id|
             springboard_invoice_line_items_create!(order, invoice_springboard_id)
@@ -170,7 +173,7 @@ module SpreeSpringboard
         end
 
         def springboard_order_invoiceable?(order)
-          order.shipped? && order.springboard_element[:status] == 'open'
+          order.shipped? && (order.springboard_element || {}) [:status] == 'open'
         end
 
         def springboard_invoice_params(order)
@@ -189,6 +192,9 @@ module SpreeSpringboard
             qty: line_item.springboard_element[:qty],
             item_id: line_item.springboard_element[:item_id]
           }
+        rescue NoMethodError => e
+          Raven.extra_context(line_item: line_item, error: e)
+          raise "Tried to set invoice line params without a springboard_element for line item #{line_item}."
         end
 
         private
