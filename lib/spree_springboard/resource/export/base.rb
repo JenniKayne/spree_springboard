@@ -100,6 +100,7 @@ module SpreeSpringboard
               begin
                 Spree::SpringboardLog.notice("Response body #{response.body}", nil, log_params)
               rescue JSON::ParserError, RuntimeError => e
+                Spree::SpringboardLog.notice("Response body #{response.raw_body}", nil, log_params)
                 Raven.extra_context(client_string: client_string, resource_type: resource_type, resource_export_params: resource_export_params, parent: parent, error: e)
                 raise 'Error parsing response body.'
               end
