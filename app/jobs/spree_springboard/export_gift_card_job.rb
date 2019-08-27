@@ -3,7 +3,11 @@ module SpreeSpringboard
     queue_as :springboard
 
     def perform(gift_card_id)
-      gift_card = Spree::GiftCard.find(gift_card_id)
+      gift_card = if gift_card_id.is_a? Integer
+                    Spree::GiftCard.find(gift_card_id)
+                  else
+                    gift_card_id
+                  end
 
       return if gift_card.springboard_id.present?
 
