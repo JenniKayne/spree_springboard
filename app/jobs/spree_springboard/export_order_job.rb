@@ -1,6 +1,12 @@
 module SpreeSpringboard
   class ExportOrderJob < ApplicationJob
+    include Sidekiq::Status::Worker
+
     queue_as :springboard
+
+    def expiration
+      @expiration ||= 60 * 60 * 24 * 7 # 7 days
+    end
 
     def perform(order_id)
       order = Spree::Order.find(order_id)
