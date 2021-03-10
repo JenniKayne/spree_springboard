@@ -26,7 +26,7 @@ module SpreeSpringboard
             ship_from_location_id: ship_from_location_id(line_item),
             total_tax: calculate_total_tax(line_item),
             created_at: line_item.created_at,
-            updated_at: line_item.updated_at
+            updated_at: line_item.updated_at,
             discounts: discounts(line_item)
           }
         end
