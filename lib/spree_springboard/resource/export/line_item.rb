@@ -27,6 +27,7 @@ module SpreeSpringboard
             total_tax: calculate_total_tax(line_item),
             created_at: line_item.created_at,
             updated_at: line_item.updated_at
+            discounts: discounts(line_item)
           }
         end
 

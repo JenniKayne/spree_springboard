@@ -6,7 +6,7 @@ module SpreeSpringboard::Resource::Clients
     end
 
     def client_create(adjustment)
-      if SpreeSpringboard::Resource::Adjustment.adjustment_type(adjustment) == 'tax'
+      if SpreeSpringboard::Resource::Export::Adjustment.adjustment_type(adjustment) == 'tax'
         client_create_tax(adjustment)
       else
         client_create_discount(adjustment)
@@ -20,7 +20,7 @@ module SpreeSpringboard::Resource::Clients
 
     def client_create_discount(adjustment)
       order_springboard_id = adjustment.order.springboard_id
-      SpreeSpringboard.client["sales/orders/#{order_springboard_id}/discounts"]
+      SpreeSpringboard.client["sales/orders/#{order_springboard_id}/lines"]
     end
   end
 end
