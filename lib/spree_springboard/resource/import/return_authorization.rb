@@ -43,7 +43,7 @@ module SpreeSpringboard
           return_authorization.return_items = return_authorization_items
 
           # Create CustomerReturn for ReturnAuthorization
-          create_spree_customer_return(return_authorization)
+          create_spree_customer_return(return_authorization, springboard_return)
 
           true
         end
@@ -112,9 +112,9 @@ module SpreeSpringboard
         #
         # Create CustomerReturn for ReturnAuthorization
         #
-        def create_spree_customer_return(return_authorization)
+        def create_spree_customer_return(return_authorization, springboard_return)
           cr = Spree::CustomerReturn.new(
-            stock_location: spree_stock_location
+            stock_location: spree_stock_location(springboard_return)
           )
           cr.return_items = return_authorization.return_items
           cr.save!
@@ -127,7 +127,7 @@ module SpreeSpringboard
         def create_spree_return_authorization(order, springboard_return)
           return_authorization = Spree::ReturnAuthorization.new(
             order: order,
-            stock_location: spree_stock_location,
+            stock_location: spree_stock_location(springboard_return),
             return_authorization_reason_id: Spree::ReturnAuthorizationReason.active.first.id,
             memo: "Springboard Return ##{springboard_return[:id]}"
           )
@@ -156,8 +156,13 @@ module SpreeSpringboard
         #
         # StockLocation for Springboard integration
         #
-        def spree_stock_location
-          Spree::StockLocation.find_by(default: true)
+        def spree_stock_location(springboard_return = false)
+          # If the return is being made from a station different to the source, return it to the station where the return was authorized.
+          if (springboard_return.present?) && (springboard_return[:station_id] != springboard_return[:source_location_id])
+            Spree::StockLocation.find_by(springboard_station_id: springboard_return[:station_id]) || Spree::StockLocation.find_by(default: true)
+          else
+            Spree::StockLocation.find_by(default: true)
+          end
         end
       end
     end
